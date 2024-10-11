@@ -17,14 +17,16 @@
 //                 V    - [processor-5]                 |
 //                 ------------>----------------->-------
 //
+
 // Data processing logic:
 // - each data event object enters through [source], and leaves via [sink] or
 //   if the data object receives a "drop" status due to a processor or
 //   if the data object receives a non "pass" status at the final processor
 //     (this is usually due to bad coding)
 //   if a data object receives a "pass" status in a pipe without a sink
-//     connection, the data object is effectively give a "drop" status
+//     connection, the data object is effectively given a "drop" status
 // 
+
 // Possible data processing routes:
 // 1) src => [pipe-1 -> processor-1 (pass)] => sink
 // 2) src => [pipe-1 -> processor-1 (abort)] =>
@@ -38,6 +40,9 @@
 //              [pipe-5 -> processor-5 (pass)] => sink
 // 5) src => [pipe-1 -> processor-1 (abort)] =>
 //            [pipe-2 -> this-processor (drop)] *
+
+// Possible processing status:
+// {"status": "pass", "drop", "abort", "error" }
 
 // From Fluency Platform ...
 // - data from "Source" is presented either as a "doc" object
@@ -151,9 +156,11 @@ function mergeTagWithMessage(obj) {
     return obj["@message"]
 }
 
-function recordDeviceMetrics(obj, size, deviceName) {
+function recordDeviceMetrics(obj, size) {
     let sender = obj["@sender"]
     let source = obj["@source"]
+
+    let deviceName = source
 
     let deviceEntry = Fluency_Device_LookupName(deviceName)
     if (!deviceEntry) {
